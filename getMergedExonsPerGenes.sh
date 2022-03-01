@@ -156,7 +156,7 @@ grep -P "\t${level_to_keep}\t" $gff_file|sort -T ${temp_dir} -k1,1 -k4,4n|awk 'O
 
 #be carefull ! bedtools 2.27-2.29 don't put the strand when using merge anymore !!
 #build merged exons (keep the gene_id info to know if we have a mix of genes); order by gene_id, then by chr, then by start
-paste <(awk 'OFS="\t"{print $1,$4-1,$5,$7}' ${temp_dir}only_exons.gff) <(cut -f9 ${temp_dir}only_exons.gff|sed 's/;/\n/g'|grep -E "${feature_to_keep}$"|sed "s/${feature_to_keep}=//g"|sed "s/${feature_to_keep} \"//g"|sed "s/\"//g"|sed "s/ //g")|awk 'OFS="\t"{print $1,$2,$3,$5,".",$4}' |sort -T ${temp_dir} -k1,1 -k2,2n | bedtools merge -s -i stdin -c 4,6 -o distinct,distinct -delim "---" 2>/dev/null|awk 'OFS="\t"{print $1,$2,$3,$4,".",$5}' |sort -T ${temp_dir} -k4,4 -k1,1 -k2,2n >${temp_dir}merged_exons.bed
+paste <(awk 'OFS="\t"{print $1,$4-1,$5,$7}' ${temp_dir}only_exons.gff) <(cut -f9 ${temp_dir}only_exons.gff|sed 's/;/\n/g'|grep "${feature_to_keep}"|sed "s/${feature_to_keep}=//g"|sed "s/${feature_to_keep} \"//g"|sed "s/\"//g"|sed "s/ //g")|awk 'OFS="\t"{print $1,$2,$3,$5,".",$4}' |sort -T ${temp_dir} -k1,1 -k2,2n | bedtools merge -s -i stdin -c 4,6 -o distinct,distinct -delim "---" 2>/dev/null|awk 'OFS="\t"{print $1,$2,$3,$4,".",$5}' |sort -T ${temp_dir} -k4,4 -k1,1 -k2,2n >${temp_dir}merged_exons.bed
 
 #store the ones that have overlaps with other genes
 #warning ! we have to ensure the research of the exact IDs (to avoid to lose some of them, e.g, with just a "grep -v" on NF1, we may lose all the IDs with this pattern, like ZNF169) !
